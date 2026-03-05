@@ -16,6 +16,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 // đánh dấu class này là 1 table
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id

@@ -2,7 +2,6 @@ package com.tihuz.indentity_service.entity;
 
 
 import com.tihuz.indentity_service.base.BaseEntity;
-import com.tihuz.indentity_service.enums.CategoryStatus;
 import com.tihuz.indentity_service.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.*;

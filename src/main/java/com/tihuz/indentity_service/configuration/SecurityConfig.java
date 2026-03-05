@@ -40,7 +40,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     // Các endpoint cho phép truy cập công khai (không cần xác thực) với phương thức POST.
-    private final String[] PUBLIC_ENDPOINTS={ "/users","/auth/token","/auth/introspect","/auth/logout","/auth/refresh",};
+    private final String[] PUBLIC_ENDPOINTS={ "/auth/token","/auth/introspect","/auth/logout","/auth/refresh",};
 
 
 
@@ -60,7 +60,12 @@ public class SecurityConfig {
                         // Cho phép public POST tới các endpoint trong PUBLIC_ENDPOINTS
                                  .requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
                                 .requestMatchers("/uploads/**").permitAll()
-
+                        .requestMatchers(
+                                "/auth/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
 
                                 // Chỉ cho phép user có role ADMIN được GET /users
                               //  .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
