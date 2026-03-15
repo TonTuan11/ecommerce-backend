@@ -37,10 +37,10 @@ import static org.mockito.Mockito.when;
 @TestPropertySource("/test.properties")   // cấu hình riêng cho môi trường test bằng file "test.properties"
 class UserControllerTest {
 
-    @Autowired
+     @Autowired
      MockMvc mvc;      // MockMvc cho phép giả lập call API đến controller
 
-    @MockitoBean
+     @MockitoBean
      UserService userService;            // thay thế UserService trong context bằng 1 mock (fake object)
 
      UserCreationRequest request;      // request giả lập gửi từ client

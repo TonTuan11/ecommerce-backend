@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +30,7 @@ import java.util.Set;
 @FieldDefaults (level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
-    EmailService emailService;
+     EmailService emailService;
      UserRepository userRepository;
      RoleRepository roleRepository;
      UserMapper userMapper;
@@ -55,6 +56,17 @@ public class UserService {
         var roleUser=roleRepository.findById(RoleType.USER.name())
                 .orElseThrow(()-> new AppException(ErrorCode.ROLE_NOTEXISTED));
         user.setRoles(Set.of(roleUser));
+
+//        var roleAdmin = roleRepository.findById(RoleType.ADMIN.name())
+//                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOTEXISTED));
+//        var roleUser = roleRepository.findById(RoleType.USER.name())
+//                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOTEXISTED));
+//
+//// Tạo Set chứa cả 2 role
+//        Set<Role> roles = Set.of(roleAdmin, roleUser);
+//        user.setRoles(roles);
+
+
 
         try {
             emailService.sendEmail(
@@ -112,11 +124,12 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN') or #id.equals(authentication.name)")
     public UserResponse getUser (String id)
     {
+
         log.info(" In method get user by Id");
 
         return userMapper.toUserResponse( userRepository.findById(id)
                 .orElseThrow(()-> new AppException(ErrorCode.USER_NOTEXISTED) ));
-        // trả về 1 Optional nên phải thêm orElse
+
 
 
     }

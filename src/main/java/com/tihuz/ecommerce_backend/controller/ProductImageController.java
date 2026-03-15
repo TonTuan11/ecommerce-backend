@@ -7,10 +7,16 @@ import com.tihuz.ecommerce_backend.service.ProductImageService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -50,5 +56,35 @@ public class ProductImageController {
 
     }
 
+    @GetMapping("/{productId}")
+    public ApiResponse<List<ProductImageResponse>> getImages(@PathVariable Long productId) {
+        List<ProductImageResponse> images = productImageService.getImages(productId);
+        return ApiResponse.<List<ProductImageResponse>>builder()
+                .code(1000)
+                .message("Success")
+                .result(images)
+                .build();
+    }
 
+    @GetMapping("/image/{productId}/{fileName}")
+    public ResponseEntity<InputStreamResource> getImage(
+            @PathVariable Long productId,
+            @PathVariable String fileName
+    ) throws IOException {
+
+        InputStream imageStream = productImageService.getImageStream(productId, fileName);
+
+        MediaType mediaType = fileName.toLowerCase().endsWith(".webp") ? MediaType.valueOf("image/webp")
+                : fileName.toLowerCase().endsWith(".jpg") || fileName.toLowerCase().endsWith(".jpeg") ? MediaType.IMAGE_JPEG
+                : fileName.toLowerCase().endsWith(".png") ? MediaType.IMAGE_PNG
+                : MediaType.APPLICATION_OCTET_STREAM;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+        headers.setContentDispositionFormData("inline", fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new InputStreamResource(imageStream));
+    }
 }

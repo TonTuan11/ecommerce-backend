@@ -1,6 +1,8 @@
 package com.tihuz.ecommerce_backend.entity;
 
+import com.tihuz.ecommerce_backend.base.BaseEntity;
 import com.tihuz.ecommerce_backend.enums.OrderStatus;
+import com.tihuz.ecommerce_backend.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,21 +18,23 @@ import java.util.List;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Order {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-
-    // không join vì hóa đơn thì không được thay đổi
-    // lưu snapshot tại thời điểm checkout
     String userId;
+
+    String recipientName;
+    String recipientPhone;
+    String shippingAddress;
+
+    @Enumerated(EnumType.STRING)
+    PaymentMethod paymentMethod;
 
     BigDecimal totalPrice;
 
-    // dùng String, nếu dùng ORDINAL sau này đổi thứ tự bị loạn
-    // String an toàn hơn
     @Enumerated( EnumType.STRING)
     OrderStatus status;
 

@@ -175,9 +175,19 @@ public class ProductService {
 
     }
 
-    public  ProductResponse getProduct (String slug)
+    public  ProductResponse getProductBySlug (String slug)
     {
         Product product= productRepository.findBySlug(slug)
+                .orElseThrow(()->new AppException(ErrorCode.PRODUCT_NOTEXISTED));
+
+
+        return productMapper.toProductResponse(product);
+
+    }
+
+    public  ProductResponse getProductById (Long productId)
+    {
+        Product product= productRepository.findById(productId)
                 .orElseThrow(()->new AppException(ErrorCode.PRODUCT_NOTEXISTED));
 
 

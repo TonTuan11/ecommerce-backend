@@ -12,6 +12,8 @@ import com.tihuz.ecommerce_backend.dto.request.RefreshRequest;
 import com.tihuz.ecommerce_backend.dto.response.AuthenticationResponse;
 import com.tihuz.ecommerce_backend.dto.response.IntrospectResponse;
 import com.tihuz.ecommerce_backend.entity.InvalidatedToken;
+import com.tihuz.ecommerce_backend.entity.Permission;
+import com.tihuz.ecommerce_backend.entity.Role;
 import com.tihuz.ecommerce_backend.entity.User;
 import com.tihuz.ecommerce_backend.exception.AppException;
 import com.tihuz.ecommerce_backend.exception.ErrorCode;
@@ -30,9 +32,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -47,7 +47,6 @@ Handle authentication and JWT token management:
         */
 public class AuthenticationService {
 
-
     UserRepository userRepository;   // thao tác user
 
     PasswordEncoder passwordEncoder;   // so khớp password
@@ -56,7 +55,6 @@ public class AuthenticationService {
 
     // annotation lombok ( để không inject vào contructor)
     @NonFinal
-
     // annotation đọc biến từ file yml
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;   // khóa HMAC HS512
@@ -68,6 +66,8 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.refreshable-duration}")
     protected long REFRESH_DURATION;
+
+
 
 
     public IntrospectResponse introspectResponse(IntrospectRequest request)
@@ -266,20 +266,59 @@ public class AuthenticationService {
 
 
     // Lấy tập hợp roles ( nối thành 1 chuỗi cách nhau bởi khoảng trắng )
-    private String buildScope(User user) {
+//    private String buildScope(User user)
+//    {
+//        StringJoiner stringJoiner = new StringJoiner(" ");
+//
+//        if (!CollectionUtils.isEmpty(user.getRoles()))
+//            user.getRoles()
+//                    .forEach(role ->
+//                                {
+//                                    stringJoiner.add("ROLE_" + role.getName());
+//                                    if (!CollectionUtils.isEmpty(role.getPermissions()))
+//                                        role.getPermissions()
+//                                                .forEach(permission ->
+//                                                        stringJoiner.add(permission.getName()));
+//                                });
+//        return stringJoiner.toString();
+//    }
 
+
+    private String buildScope(User user)
+    {
         StringJoiner stringJoiner = new StringJoiner(" ");
 
         if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles()
-                    .forEach(role ->
-                                {
-                                    stringJoiner.add("ROLE_" + role.getName());
-                                    if (!CollectionUtils.isEmpty(role.getPermissions()))
-                                        role.getPermissions()
-                                                .forEach(permission ->
-                                                        stringJoiner.add(permission.getName()));
-                                });
+        {
+            user.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+        }
+
+        Set<String> permissions = getUserPermissions(user);
+        if (!CollectionUtils.isEmpty(permissions))
+        {
+            permissions.forEach(stringJoiner::add);
+        }
         return stringJoiner.toString();
     }
+
+
+
+    public Set<String> getUserPermissions(User user)
+    {
+        Set<String> permissions= new HashSet<>();
+        if(user.getRoles()!=null)
+        {
+            for (Role role: user.getRoles())
+            {
+                if(role.getPermissions()!=null)
+                {
+                    role.getPermissions().forEach(p -> permissions.add(p.getName()));
+                }
+            }
+        }
+        return permissions;
+    }
+
+
+
 }

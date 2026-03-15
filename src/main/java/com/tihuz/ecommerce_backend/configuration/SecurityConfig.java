@@ -38,7 +38,7 @@ public class SecurityConfig {
 
     // Các endpoint cho phép truy cập công khai (không cần xác thực) với phương thức POST.
     private final String[] PUBLIC_ENDPOINTS={ "/users","/auth/**",};
-    private final String[] PUBLIC_ENDPOINTS_GET={ "/products/**","/categories/**","/brands/**"};
+    private final String[] PUBLIC_ENDPOINTS_GET={ "/products/**","/categories/**","/brands/**","/product-image/image/**"};
     @Autowired
     private CorsConfigurationSource corsConfigurationSource;
 

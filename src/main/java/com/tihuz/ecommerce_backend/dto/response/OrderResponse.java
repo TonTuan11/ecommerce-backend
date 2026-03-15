@@ -1,9 +1,10 @@
 package com.tihuz.ecommerce_backend.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.tihuz.ecommerce_backend.enums.PaymentMethod;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,11 +13,16 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
 
-    private Long id;
-    private String userId;
-    private BigDecimal totalPrice;
-    private String status;
-    private List<OrderItemResponse> items;
+     Long id;
+     String userId;
+    String recipientName;
+    String recipientPhone;
+    String shippingAddress;
+    String paymentMethod;
+    BigDecimal totalPrice;
+     String status;
+     List<OrderItemResponse> items;
 }

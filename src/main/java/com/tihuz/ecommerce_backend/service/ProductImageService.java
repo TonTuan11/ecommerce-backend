@@ -13,9 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -107,5 +108,30 @@ public class ProductImageService {
         image.setIsThumbnail(true);
     }
 
+
+    public List<ProductImageResponse> getImages(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOTEXISTED));
+
+        return product.getImages().stream()
+                .map(img -> ProductImageResponse.builder()
+                        .id(img.getId())
+                        .url(img.getUrl().startsWith("http") ? img.getUrl() : "http://localhost:8080" + img.getUrl())
+                        .isThumbnail(img.getIsThumbnail())
+                        .build())
+                .toList();
+    }
+
+    public InputStream getImageStream(Long productId, String fileName) throws IOException {
+        Path filePath = Paths.get("uploads/products")
+                .resolve(String.valueOf(productId))
+                .resolve(fileName);
+
+        if (!Files.exists(filePath)) {
+            throw new FileNotFoundException("File not found: " + fileName);
+        }
+
+        return Files.newInputStream(filePath);
+    }
 
 }

@@ -30,8 +30,8 @@ public class Category extends BaseEntity {
     @Column(nullable = false,unique = true)
     String slug;
 
-    @ManyToOne(fetch = FetchType.LAZY)  // fetch ảnh hưởng thời điểm query  LAZY = tải khi cần , gọi getter thì nó mới query.
-    @JoinColumn(name = "parent_id")  //FK
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
     Category parent;   // có thể xem parent là dữ liệu
 
 

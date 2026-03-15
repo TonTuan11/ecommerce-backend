@@ -52,9 +52,19 @@ public class ProductController {
     ApiResponse<ProductResponse> getProductBySlug(@PathVariable String slug)
     {
         return ApiResponse.<ProductResponse>builder()
-                .result(productService.getProduct(slug))
+                .result(productService.getProductBySlug(slug))
                 .build();
     }
+
+    @GetMapping("/i/{id}")
+    ApiResponse<ProductResponse> getProductById(@PathVariable Long id)
+    {
+        return ApiResponse.<ProductResponse>builder()
+                .result(productService.getProductById(id))
+                .build();
+    }
+
+
 
     @PutMapping("/{slug}")
     ApiResponse<ProductResponse> updateProduct(@PathVariable String slug, @RequestBody ProductUpdateRequest request)

@@ -1,5 +1,6 @@
 package com.tihuz.ecommerce_backend.controller;
 
+import com.tihuz.ecommerce_backend.dto.request.OrderRequest;
 import com.tihuz.ecommerce_backend.dto.response.OrderResponse;
 import com.tihuz.ecommerce_backend.service.OrderService;
 import lombok.AccessLevel;
@@ -7,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -20,11 +21,19 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping("/checkout")
-    public ResponseEntity<OrderResponse> checkout() {
+    public ResponseEntity<OrderResponse> checkout(@RequestBody OrderRequest request) {
         String userId = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
-        return ResponseEntity.ok(orderService.checkout(userId));
+        return ResponseEntity.ok(orderService.checkout(userId,request));
+    }
+
+    @GetMapping("/my-orders")
+    public List<OrderResponse> getOrderForUser()
+    { String userId = SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getName();
+        return orderService.getOrdersForUser(userId);
     }
 }
